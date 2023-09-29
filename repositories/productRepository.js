@@ -1,11 +1,11 @@
-const mysql = require('mysql2');
+const mysql = require("mysql2");
 const Product = require('../models/product');
 
 const connection = mysql.createConnection({
   host: 'localhost',
   user: 'root',
-  password: '2023',
-  database: 'products'
+  password: '',
+  database: 'TiendaVirtual'
 });
 
 connection.connect();
@@ -13,7 +13,7 @@ connection.connect();
 class ProductRepository {
   // Obtener todos los productos
   static getAllProducts(callback) {
-    connection.query('SELECT * FROM products', (error, results) => {
+    connection.query('SELECT * FROM PRODUCTO', (error, results) => {
       if (error) throw error;
 
       const products = results.map(row => new Product(row.id, row.nombre, row.precio));
@@ -23,7 +23,7 @@ class ProductRepository {
 
   // Obtener un producto por ID
   static getProductById(id, callback) {
-    connection.query('SELECT * FROM products WHERE id = ?', [id], (error, results) => {
+    connection.query('SELECT * FROM PRODUCTO WHERE id = ?', [id], (error, results) => {
       if (error) throw error;
 
       if (results.length > 0) {
@@ -38,18 +38,16 @@ class ProductRepository {
 
   // Agregar un nuevo producto
   static addProduct(product, callback) {
-    connection.query('INSERT INTO products (nombre, precio) VALUES (?, ?)', [product.nombre, product.precio], (error, results) => {
+    connection.query('INSERT INTO PRODUCTO (nombre, precio) VALUES (?, ?)', [product.nombre, product.precio], (error, results) => {
       if (error) throw error;
-
-      const newProductId = results.insertId;
-      callback(newProductId);
+      callback();
     });
   }
 
   // Actualizar un producto
   static updateProduct(product, callback) {
-    connection.query('UPDATE products SET nombre = ?, precio = ? WHERE id = ?', [product.nombre, product.precio, product.id], (error) => {
-      if (error) throw error;
+    connection.query('UPDATE PRODUCTO SET nombre = ?, precio = ? WHERE id = ?', [product.nombre, product.precio, product.id], (error) => {
+      if (error) return callback(error);
 
       callback();
     });
@@ -57,8 +55,8 @@ class ProductRepository {
 
   // Eliminar un producto
   static deleteProduct(id, callback) {
-    connection.query('DELETE FROM products WHERE id = ?', [id], (error) => {
-      if (error) throw error;
+    connection.query('DELETE FROM PRODUCTO WHERE id = ?', [id], (error) => {
+      if (error) return callback(error);
 
       callback();
     });

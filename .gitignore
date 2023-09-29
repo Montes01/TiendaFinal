@@ -1,1 +1,4 @@
 node_modules
+.prettierrc
+README.md
+pnpm-lock.yaml
